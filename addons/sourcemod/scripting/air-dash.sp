@@ -76,10 +76,10 @@ public void OnConVarChanged(ConVar convar, const char[] oldValue, const char[] n
 public MRESReturn DHookCallback_PreCanAirDash(int client)
 {
 	oldPlayerClass[client] = TF2_GetPlayerClass(client);
-	TF2_SetPlayerClass(client, TFClass_Scout);
+	TF2_SetPlayerClass(client, TFClass_Scout, _, false);
 }
 
 public MRESReturn DHookCallback_PostCanAirDash(int client)
 {
-	TF2_SetPlayerClass(client, oldPlayerClass[client]);
+	TF2_SetPlayerClass(client, oldPlayerClass[client], _, false);
 }
