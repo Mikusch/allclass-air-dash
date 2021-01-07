@@ -22,6 +22,11 @@
 #pragma semicolon 1
 #pragma newdecls required
 
+DynamicDetour g_Detour;
+ConVar tf_all_classes_can_air_dash;
+
+TFClassType g_OldPlayerClass[MAXPLAYERS + 1];
+
 public Plugin myinfo = 
 {
 	name = "TF2 all-class air dash", 
@@ -30,11 +35,6 @@ public Plugin myinfo =
 	version = "v1.0", 
 	url = "https://github.com/Mikusch/air-dash"
 }
-
-DynamicDetour detour;
-ConVar tf_all_classes_can_air_dash;
-
-TFClassType oldPlayerClass[MAXPLAYERS + 1];
 
 public void OnPluginStart()
 {
@@ -45,11 +45,11 @@ public void OnPluginStart()
 	if (gamedata == null)
 		SetFailState("Could not find air-dash gamedata");
 	
-	detour = DynamicDetour.FromConf(gamedata, "CTFPlayer::CanAirDash");
-	if (detour)
+	g_Detour = DynamicDetour.FromConf(gamedata, "CTFPlayer::CanAirDash");
+	if (g_Detour)
 	{
-		detour.Enable(Hook_Pre, DHookCallback_PreCanAirDash);
-		detour.Enable(Hook_Post, DHookCallback_PostCanAirDash);
+		g_Detour.Enable(Hook_Pre, DHookCallback_PreCanAirDash);
+		g_Detour.Enable(Hook_Post, DHookCallback_PostCanAirDash);
 	}
 	else
 	{
@@ -63,23 +63,23 @@ public void OnConVarChanged(ConVar convar, const char[] oldValue, const char[] n
 {
 	if (convar.BoolValue)
 	{
-		detour.Enable(Hook_Pre, DHookCallback_PreCanAirDash);
-		detour.Enable(Hook_Post, DHookCallback_PostCanAirDash);
+		g_Detour.Enable(Hook_Pre, DHookCallback_PreCanAirDash);
+		g_Detour.Enable(Hook_Post, DHookCallback_PostCanAirDash);
 	}
 	else
 	{
-		detour.Disable(Hook_Pre, DHookCallback_PreCanAirDash);
-		detour.Disable(Hook_Post, DHookCallback_PostCanAirDash);
+		g_Detour.Disable(Hook_Pre, DHookCallback_PreCanAirDash);
+		g_Detour.Disable(Hook_Post, DHookCallback_PostCanAirDash);
 	}
 }
 
 public MRESReturn DHookCallback_PreCanAirDash(int client)
 {
-	oldPlayerClass[client] = TF2_GetPlayerClass(client);
+	g_OldPlayerClass[client] = TF2_GetPlayerClass(client);
 	TF2_SetPlayerClass(client, TFClass_Scout, _, false);
 }
 
 public MRESReturn DHookCallback_PostCanAirDash(int client)
 {
-	TF2_SetPlayerClass(client, oldPlayerClass[client], _, false);
+	TF2_SetPlayerClass(client, g_OldPlayerClass[client], _, false);
 }
