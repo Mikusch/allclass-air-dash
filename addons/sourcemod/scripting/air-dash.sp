@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020  Mikusch
+ * Copyright (C) 2021  Mikusch
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,23 +16,20 @@
  */
 
 #include <sourcemod>
-#include <tf2_stocks>
-#include <dhooks>
+#include <memorypatch>
 
 #pragma semicolon 1
 #pragma newdecls required
 
-DynamicDetour g_Detour;
 ConVar tf_all_classes_can_air_dash;
-
-TFClassType g_OldPlayerClass[MAXPLAYERS + 1];
+MemoryPatch g_MemoryPatchAllClassesCanAirDash;
 
 public Plugin myinfo = 
 {
 	name = "TF2 all-class air dash", 
 	author = "Mikusch", 
 	description = "Allows all classes to perform an air dash", 
-	version = "1.0.0", 
+	version = "1.1.0", 
 	url = "https://github.com/Mikusch/air-dash"
 }
 
@@ -45,41 +42,34 @@ public void OnPluginStart()
 	if (gamedata == null)
 		SetFailState("Could not find air-dash gamedata");
 	
-	g_Detour = DynamicDetour.FromConf(gamedata, "CTFPlayer::CanAirDash");
-	if (g_Detour)
-	{
-		g_Detour.Enable(Hook_Pre, DHookCallback_PreCanAirDash);
-		g_Detour.Enable(Hook_Post, DHookCallback_PostCanAirDash);
-	}
-	else
-	{
-		SetFailState("Failed to create detour setup handle for function CTFPlayer::CanAirDash");
-	}
+	MemoryPatch.SetGameData(gamedata);
+	CreateMemoryPatch(g_MemoryPatchAllClassesCanAirDash, "MemoryPatch_AllClassesCanAirDash");
 	
 	delete gamedata;
 }
 
+public void OnPluginEnd()
+{
+	if (g_MemoryPatchAllClassesCanAirDash != null)
+		g_MemoryPatchAllClassesCanAirDash.Disable();
+}
+
 public void OnConVarChanged(ConVar convar, const char[] oldValue, const char[] newValue)
 {
-	if (convar.BoolValue)
+	if (g_MemoryPatchAllClassesCanAirDash != null)
 	{
-		g_Detour.Enable(Hook_Pre, DHookCallback_PreCanAirDash);
-		g_Detour.Enable(Hook_Post, DHookCallback_PostCanAirDash);
+		if (convar.BoolValue)
+			g_MemoryPatchAllClassesCanAirDash.Enable();
+		else
+			g_MemoryPatchAllClassesCanAirDash.Disable();
 	}
+}
+
+void CreateMemoryPatch(MemoryPatch &handle, const char[] name)
+{
+	handle = new MemoryPatch(name);
+	if (handle != null)
+		handle.Enable();
 	else
-	{
-		g_Detour.Disable(Hook_Pre, DHookCallback_PreCanAirDash);
-		g_Detour.Disable(Hook_Post, DHookCallback_PostCanAirDash);
-	}
-}
-
-public MRESReturn DHookCallback_PreCanAirDash(int client)
-{
-	g_OldPlayerClass[client] = TF2_GetPlayerClass(client);
-	TF2_SetPlayerClass(client, TFClass_Scout, _, false);
-}
-
-public MRESReturn DHookCallback_PostCanAirDash(int client)
-{
-	TF2_SetPlayerClass(client, g_OldPlayerClass[client], _, false);
+		LogError("Failed to create memory patch %s", name);
 }
