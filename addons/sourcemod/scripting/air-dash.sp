@@ -32,7 +32,7 @@ public Plugin myinfo =
 	name = "TF2 all-class air dash", 
 	author = "Mikusch", 
 	description = "Allows all classes to perform an air dash", 
-	version = "v1.0", 
+	version = "1.0.0", 
 	url = "https://github.com/Mikusch/air-dash"
 }
 
