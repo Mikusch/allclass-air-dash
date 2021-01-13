@@ -1,5 +1,10 @@
-This is a simple plugin that allows all classes to perform an air dash. It can be enabled or disabled with the ConVar `tf_all_classes_can_air_dash`.
+# Team Fortress 2 All-Class Air Dash
 
-This implementation respects all ConVars, attributes and conditions related to air dashing.
+This is a simple plugin that allows all classes to perform an air dash. It can be enabled or disabled with the ConVar `tf_all_classes_can_air_dash ( def. "1" )`.
 
-Your server needs [DHooks with Detour Support](https://github.com/peace-maker/DHooks2) to use this.
+While I'm sure this has been done before, this implementation respects all ConVars, attributes and conditions related to air dashing.
+
+## Dependencies
+
+* SourceMod 1.10
+* [MemoryPatch](https://github.com/Kenzzer/MemoryPatch) (compile only)
