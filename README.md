@@ -1,10 +1,14 @@
-# Team Fortress 2 All-Class Air Dash
+# [TF2] All-Class Air Dash
 
-This is a simple plugin that allows all classes to perform an air dash. It can be enabled or disabled with the ConVar `tf_all_classes_can_air_dash ( def. "1" )`.
+This is a simple SourceMod plugin for Team Fortress 2 that enables all classes to perform air dashes, also referred to as double jumps.
 
-While I'm sure this has been done before, this implementation respects all ConVars, attributes and conditions related to air dashing.
+This implementation patches the class check in `CTFPlayer::CanAirDash`, which means it respects all convars, attributes and conditions related to air dashing.
 
 ## Dependencies
 
-* SourceMod 1.10
+* SourceMod 1.10+
 * [MemoryPatch](https://github.com/Kenzzer/MemoryPatch) (compile only)
+
+## Configuration
+
+* `tf_allclass_air_dash ( def. "1" )` - When set to 1, enables all classes to perform air dashes

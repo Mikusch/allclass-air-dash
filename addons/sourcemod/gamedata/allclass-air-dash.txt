@@ -1,0 +1,56 @@
+/*
+ * Copyright (C) 2021  Mikusch
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+"Games"
+{
+	"tf"
+	{
+		"Signatures"
+		{
+			"CTFPlayer::CanAirDash"
+			{
+				"library"	"server"
+				"linux"		"@_ZNK9CTFPlayer10CanAirDashEv"
+				"windows"	"\x55\x8B\xEC\x83\xEC\x08\x57\x8B\xF9\xF7\x87\x84\x1A\x00\x00\x00\x00\x04\x00"
+			}
+		}
+		"Addresses"
+		{
+			"MemoryPatch_CanAirDashClassCheck"
+			{
+				"linux"
+				{
+					"signature"	"CTFPlayer::CanAirDash"
+					"offset"	"68"	// CTFPlayer::CanAirDash+44
+				}
+				"windows"
+				{
+					"signature"	"CTFPlayer::CanAirDash"
+					"offset"	"47"	// CTFPlayer::CanAirDash+2F
+				}
+			}
+		}
+		"Keys"
+		{
+			"MemoryPatch_CanAirDashClassCheck"
+			{
+				"linux"		"\x90\x90\x90\x90\x90\x90\x90\x90\x90"	// cmp dword, jnz short -> NOP
+				"windows"	"\x90\x90\x90\x90\x90\x90\x90\x90\x90"	// cmp dword, jnz short -> NOP
+			}
+		}
+	}
+}

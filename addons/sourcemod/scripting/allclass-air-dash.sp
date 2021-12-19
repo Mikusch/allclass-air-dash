@@ -21,55 +21,58 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-ConVar tf_all_classes_can_air_dash;
-MemoryPatch g_MemoryPatchAllClassesCanAirDash;
+ConVar tf_allclass_air_dash;
+MemoryPatch g_MemoryPatchCanAirDashClassCheck;
 
 public Plugin myinfo = 
 {
-	name = "TF2 all-class air dash", 
-	author = "Mikusch", 
-	description = "Allows all classes to perform an air dash", 
-	version = "1.1.0", 
-	url = "https://github.com/Mikusch/air-dash"
+	name = "[TF2] All-Class Air Dash",
+	author = "Mikusch",
+	description = "Enables all classes to perform air dashes (double jumps)",
+	version = "1.2.0",
+	url = "https://github.com/Mikusch/allclass-air-dash"
 }
 
 public void OnPluginStart()
 {
-	tf_all_classes_can_air_dash = CreateConVar("tf_all_classes_can_air_dash", "1", "When enabled, all classes are allowed to perform an air dash", _, true, 0.0, true, 1.0);
-	tf_all_classes_can_air_dash.AddChangeHook(OnConVarChanged);
+	if (GetEngineVersion() != Engine_TF2)
+		SetFailState("This plugin is only compatible with Team Fortress 2");
 	
-	GameData gamedata = new GameData("air-dash");
+	tf_allclass_air_dash = CreateConVar("tf_allclass_air_dash", "1", "When set to 1, enables all classes to perform air dashes");
+	tf_allclass_air_dash.AddChangeHook(OnConVarChanged);
+	
+	GameData gamedata = new GameData("allclass-air-dash");
 	if (gamedata == null)
-		SetFailState("Could not find air-dash gamedata");
+		SetFailState("Could not find allclass-air-dash gamedata");
 	
 	MemoryPatch.SetGameData(gamedata);
-	CreateMemoryPatch(g_MemoryPatchAllClassesCanAirDash, "MemoryPatch_AllClassesCanAirDash");
+	CreateMemoryPatch(g_MemoryPatchCanAirDashClassCheck, "MemoryPatch_CanAirDashClassCheck");
 	
 	delete gamedata;
 }
 
 public void OnPluginEnd()
 {
-	if (g_MemoryPatchAllClassesCanAirDash != null)
-		g_MemoryPatchAllClassesCanAirDash.Disable();
+	if (g_MemoryPatchCanAirDashClassCheck)
+		g_MemoryPatchCanAirDashClassCheck.Disable();
 }
 
 public void OnConVarChanged(ConVar convar, const char[] oldValue, const char[] newValue)
 {
-	if (g_MemoryPatchAllClassesCanAirDash != null)
+	if (g_MemoryPatchCanAirDashClassCheck)
 	{
 		if (convar.BoolValue)
-			g_MemoryPatchAllClassesCanAirDash.Enable();
+			g_MemoryPatchCanAirDashClassCheck.Enable();
 		else
-			g_MemoryPatchAllClassesCanAirDash.Disable();
+			g_MemoryPatchCanAirDashClassCheck.Disable();
 	}
 }
 
 void CreateMemoryPatch(MemoryPatch &handle, const char[] name)
 {
 	handle = new MemoryPatch(name);
-	if (handle != null)
+	if (handle)
 		handle.Enable();
 	else
-		LogError("Failed to create memory patch %s", name);
+		LogError("Failed to create memory patch: %s", name);
 }
