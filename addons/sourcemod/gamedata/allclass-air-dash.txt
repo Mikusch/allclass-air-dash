@@ -35,7 +35,7 @@
 				"linux"
 				{
 					"signature"	"CTFPlayer::CanAirDash"
-					"offset"	"68"	// CTFPlayer::CanAirDash+44
+					"offset"	"50"	// CTFPlayer::CanAirDash+32
 				}
 				"windows"
 				{
