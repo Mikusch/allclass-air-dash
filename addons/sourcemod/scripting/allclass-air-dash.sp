@@ -29,7 +29,7 @@ public Plugin myinfo =
 	name = "[TF2] All-Class Air Dash",
 	author = "Mikusch",
 	description = "Enables all classes to perform air dashes (double jumps)",
-	version = "1.2.0",
+	version = "1.2.1",
 	url = "https://github.com/Mikusch/allclass-air-dash"
 }
 
